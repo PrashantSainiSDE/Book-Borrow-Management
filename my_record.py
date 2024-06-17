@@ -256,46 +256,84 @@ class Records:
         return textbooks_output + fictions_output
 
     def display_members(self):
-        output = []
-        output.append("\nMEMBER INFORMATION")
-        output.append("-" * 112)
-        output.append(f"| {'Member IDs':<15} {'FName':<10} {'LName':<5} {'Type':>15} {'DOB':>15} {'Ntextbook':>10} {'Nfiction':>10} {'Average':>10} {'Fee':>10} |")
-        output.append("-" * 112)
+        standard_members_output = []
+        premium_members_output = []
+
+        standard_members_output.append("\nSTANDARD MEMBERS INFORMATION")
+        standard_members_output.append("-" * 112)
+        standard_members_output.append(f"| {'Member IDs':<15} {'FName':<10} {'LName':<5} {'Type':>15} {'DOB':>15} {'Ntextbook':>10} {'Nfiction':>10} {'Average':>10} {'Fee':>10} |")
+        standard_members_output.append("-" * 112)
+        
+        premium_members_output.append("\nPREMIUM MEMBERs INFORMATION")
+        premium_members_output.append("-" * 112)
+        premium_members_output.append(f"| {'Member IDs':<15} {'FName':<10} {'LName':<5} {'Type':>15} {'DOB':>15} {'Ntextbook':>10} {'Nfiction':>10} {'Average':>10} {'Fee':>10} |")
+        premium_members_output.append("-" * 112)
+
+        standard_members = sorted([member for member in self.members.values() if member.member_type == 'Standard'], key=lambda x: -x.calculate_fees(self.books))
+        premium_members = sorted([member for member in self.members.values() if member.member_type == 'Premium'], key=lambda x: -x.calculate_fees(self.books))
 
         most_active_member = None
         most_books_borrowed = 0
         least_avg_days_member = None
         least_avg_days = float('inf')
-        sorted_members = sorted(self.members)
 
-        for member in sorted_members:
-            ntextbooks = self.members[member].num_textbooks(self.books)
-            nfictions = self.members[member].num_fictions(self.books)
-            avg_days = self.members[member].average_borrow_days()
-            ntextbooks_str = f"{ntextbooks}!" if not self.members[member].validate_borrowing_limits(ntextbooks, nfictions) else str(ntextbooks)
-            nfictions_str = f"{nfictions}!" if not self.members[member].validate_reserving_limits(self.books) else str(nfictions)
-            fee = self.members[member].calculate_fees(self.books)
-            
-            dob = datetime.datetime.strptime(self.members[member].dob, "%m/%d/%Y").strftime("%d-%b-%Y")
+        for member in standard_members:
+            ntextbooks = member.num_textbooks(self.books)
+            nfictions = member.num_fictions(self.books)
+            avg_days = member.average_borrow_days()
+            ntextbooks_str = f"{ntextbooks}!" if not member.validate_borrowing_limits(ntextbooks, nfictions) else str(ntextbooks)
+            nfictions_str = f"{nfictions}!" if not member.validate_reserving_limits(self.books) else str(nfictions)
+            dob = datetime.datetime.strptime(member.dob, "%m/%d/%Y").strftime("%d-%b-%Y")
+            fee = member.calculate_fees(self.books)
 
-            output.append(f"| {self.members[member].member_id:<15} {self.members[member].first_name:<10} {self.members[member].last_name:<10} {self.members[member].member_type:>10} {dob:>15} {ntextbooks_str:>10} {nfictions_str:>10} {avg_days:>10.2f} {fee:>10.2f} |")
+            standard_members_output.append(f"| {member.member_id:<15} {member.first_name:<10} {member.last_name:<10} {member.member_type:>10} {dob:>15} {ntextbooks_str:>10} {nfictions_str:>10} {avg_days:>10.2f} {fee:>10.2f} |")
 
             total_borrowed = ntextbooks + nfictions
             if total_borrowed > most_books_borrowed:
                 most_books_borrowed = total_borrowed
-                most_active_member = self.members[member]
+                most_active_member = member
 
             if avg_days < least_avg_days:
                 least_avg_days = avg_days
-                least_avg_days_member = self.members[member]
+                least_avg_days_member = member
 
-        output.append("-" * 112)
+        standard_members_output.append("-" * 112)
 
-        output.append("MEMBER SUMMARY")
-        output.append(f"The most active member is {most_active_member.first_name} {most_active_member.last_name} with {most_books_borrowed} books borrowed/reserved.")
-        output.append(f"The member with the least average number of borrowing days is {least_avg_days_member.first_name} {least_avg_days_member.last_name} with {least_avg_days:.2f} days.")
+        standard_members_output.append("STANDARD MEMBERS SUMMARY")
+        standard_members_output.append(f"The most active standard member is {most_active_member.first_name} {most_active_member.last_name} with {most_books_borrowed} books borrowed/reserved.")
+        standard_members_output.append(f"The standard member with the least average number of borrowing days is {least_avg_days_member.first_name} {least_avg_days_member.last_name} with {least_avg_days:.2f} days.")
 
-        return output
+        most_active_member = None
+        most_books_borrowed = 0
+        least_avg_days_member = None
+        least_avg_days = float('inf')
+
+        for member in premium_members:
+            ntextbooks = member.num_textbooks(self.books)
+            nfictions = member.num_fictions(self.books)
+            avg_days = member.average_borrow_days()
+            ntextbooks_str = f"{ntextbooks}!" if not member.validate_borrowing_limits(ntextbooks, nfictions) else str(ntextbooks)
+            nfictions_str = f"{nfictions}!" if not member.validate_reserving_limits(self.books) else str(nfictions)
+            dob = datetime.datetime.strptime(member.dob, "%m/%d/%Y").strftime("%d-%b-%Y")
+            fee = member.calculate_fees(self.books)
+
+            premium_members_output.append(f"| {member.member_id:<15} {member.first_name:<10} {member.last_name:<10} {member.member_type:>10} {dob:>15} {ntextbooks_str:>10} {nfictions_str:>10} {avg_days:>10.2f} {fee:>10.2f} |")
+
+            total_borrowed = ntextbooks + nfictions
+            if total_borrowed > most_books_borrowed:
+                most_books_borrowed = total_borrowed
+                most_active_member = member
+
+            if avg_days < least_avg_days:
+                least_avg_days = avg_days
+                least_avg_days_member = member
+
+        premium_members_output.append("-" * 112)
+        premium_members_output.append("PREMIUM MEMBERS SUMMARY")
+        premium_members_output.append(f"The most active premium member is {most_active_member.first_name} {most_active_member.last_name} with {most_books_borrowed} books borrowed/reserved.")
+        premium_members_output.append(f"The premium member with the least average number of borrowing days is {least_avg_days_member.first_name} {least_avg_days_member.last_name} with {least_avg_days:.2f} days.")
+
+        return standard_members_output + premium_members_output
   
     def save_to_file(self, filename, *output):
         with open(filename, 'w') as file:
