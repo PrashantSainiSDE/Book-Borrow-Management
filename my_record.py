@@ -129,27 +129,21 @@ class Records:
             print(f"Error: The file {member_file_name} does not exist.")
 
     def display_records(self):
-        print("\nRECORDS")
-        print("-" * 64)
-        
+        output = []
+        output.append("RECORDS")
+        output.append("-" * 64)
+
         books_ids = sorted(self.books.keys())
-        print("| Member IDs", end='')
-        for book_id in books_ids:
-            print(f"{book_id:>10}", end='')
-        print(" |")
-        print("-" * 64)
+        output.append("| Member IDs" + ''.join([f"{book_id:>10}" for book_id in books_ids]) + " |")
+        output.append("-" * 64)
 
         for member_id in self.members.keys():
-            print(f"| {member_id:<10}", end='')
-            for book_id in books_ids:
-                days = self.books[book_id].borrowed_days.get(member_id, 'xx')
-                if days == 'R':
-                    days = '--'
-                print(f"{days:>10}", end='')
-            print(" |")
-        print("-" * 64)
+            
+            line = f"| {member_id:<10}" + ''.join([f"{'--' if self.books[book_id].borrowed_days.get(member_id, 'xx') == 'R' else self.books[book_id].borrowed_days.get(member_id, 'xx'):>10}" for book_id in books_ids]) + " |"
+            output.append(line)
+        output.append("-" * 64)
 
-        print("RECORDS SUMMARY")
+        output.append("RECORDS SUMMARY")
         total_books = len(self.books)
         total_members = len(self.members)
         total_days = 0
@@ -163,14 +157,17 @@ class Records:
 
         average_days = total_days / num_times_book
 
-        print(f"There are {total_members} members and {total_books} books.")
-        print(f"The average number of borrow days is {average_days:.2f} (days).")
+        output.append(f"There are {total_members} members and {total_books} books.")
+        output.append(f"The average number of borrow days is {average_days:.2f} (days).")
+
+        return output
 
     def display_books(self):
-        print("\nBOOK INFORMATION")
-        print("-" * 110)
-        print(f"| {'Book IDs':<10} {'Name':<15} {'Type':<15} {'Ncopy':<10} {'Maxday':<10} {'Lcharge':<10} {'Nborrow':<10} {'Nreserve':<10} {'Range':<8} |")
-        print("-" * 110)
+        output = []
+        output.append("\nBOOK INFORMATION")
+        output.append("-" * 108)
+        output.append(f"| {'Book IDs':<10} {'Name':<15} {'Type':<15} {'Ncopy':<10} {'Maxday':<10} {'Lcharge':<10} {'Nborrow':<10} {'Nreserve':<10} {'Range':<6} |")
+        output.append("-" * 108)
 
         for book in self.books.values():
             book_type = "Textbook" if book.book_type == 'T' else "Fiction"
@@ -178,25 +175,27 @@ class Records:
             nreserve = book.num_reserving_members()
             min_days, max_days = book.range_of_borrowing_days()
 
-            print(f"| {book.book_id:<10} {book.name:<15} {book_type:<18} {book.num_copies:<10} {book.max_days:<10} {book.late_charge:<12.1f} {nborrow:<12} {nreserve:<4} {min_days}-{max_days:<5} |")
+            output.append(f"| {book.book_id:<10} {book.name:<15} {book_type:<10} {book.num_copies:>10} {book.max_days:>10} {book.late_charge:>10.1f} {nborrow:>12} {nreserve:>11} {min_days:>4}-{max_days:<3} |")
 
-        print("-" * 110)
+        output.append("-" * 108)
 
-        print("BOOK SUMMARY")
+        output.append("BOOK SUMMARY")
         most_popular_books = sorted(self.books.values(), key=lambda b: b.num_borrowing_members() + b.num_reserving_members(), reverse=True)
         most_popular_book = most_popular_books[0]
-        print(f"The most popular book is {most_popular_book.name}.")
+        output.append(f"The most popular book is {most_popular_book.name}.")
 
-        # Determine the book with the longest days borrowed
         longest_borrowed_books = sorted(self.books.values(), key=lambda b: b.range_of_borrowing_days()[1], reverse=True)
         longest_borrowed_book = longest_borrowed_books[0]
-        print(f"The book {longest_borrowed_book.name} has the longest borrow days ({longest_borrowed_book.range_of_borrowing_days()[1]} days).")
+        output.append(f"The book {longest_borrowed_book.name} has the longest borrow days ({longest_borrowed_book.range_of_borrowing_days()[1]} days).")
+        
+        return output
 
     def display_members(self):
-        print("\nMEMBER INFORMATION")
-        print("-" * 101)
-        print(f"| {'Member IDs':<15} {'FName':<10} {'LName':<5} {'Type':>15} {'DOB':>15} {'Ntextbook':>10} {'Nfiction':>10} {'Average':>10} |")
-        print("-" * 101)
+        output = []
+        output.append("\nMEMBER INFORMATION")
+        output.append("-" * 101)
+        output.append(f"| {'Member IDs':<15} {'FName':<10} {'LName':<5} {'Type':>15} {'DOB':>15} {'Ntextbook':>10} {'Nfiction':>10} {'Average':>10} |")
+        output.append("-" * 101)
 
         most_active_member = None
         most_books_borrowed = 0
@@ -213,7 +212,7 @@ class Records:
             
             dob = datetime.datetime.strptime(self.members[member].dob, "%m/%d/%Y").strftime("%d-%b-%Y")
 
-            print(f"| {self.members[member].member_id:<15} {self.members[member].first_name:<10} {self.members[member].last_name:<10} {self.members[member].member_type:>10} {dob:>15} {ntextbooks_str:>10} {nfictions_str:>10} {avg_days:>10.2f} |")
+            output.append(f"| {self.members[member].member_id:<15} {self.members[member].first_name:<10} {self.members[member].last_name:<10} {self.members[member].member_type:>10} {dob:>15} {ntextbooks_str:>10} {nfictions_str:>10} {avg_days:>10.2f} |")
 
             total_borrowed = ntextbooks + nfictions
             if total_borrowed > most_books_borrowed:
@@ -224,15 +223,18 @@ class Records:
                 least_avg_days = avg_days
                 least_avg_days_member = self.members[member]
 
-        print("-" * 101)
+        output.append("-" * 101)
 
-        print("MEMBER SUMMARY")
-        print(f"The most active member is: {most_active_member.first_name} {most_active_member.last_name} with {most_books_borrowed} books borrowed/reserved.")
-        print(f"The member with the least average number of borrowing days is {least_avg_days_member.first_name} {least_avg_days_member.last_name} with {least_avg_days:.2f} days.")
+        output.append("MEMBER SUMMARY")
+        output.append(f"The most active member is: {most_active_member.first_name} {most_active_member.last_name} with {most_books_borrowed} books borrowed/reserved.")
+        output.append(f"The member with the least average number of borrowing days is {least_avg_days_member.first_name} {least_avg_days_member.last_name} with {least_avg_days:.2f} days.")
+
+        return output
   
-    def save_to_file(self, filename):
+    def save_to_file(self, filename, *output):
         with open(filename, 'w') as file:
-            pass
+             for out in output:
+                file.write('\n'.join(out) + '\n')
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
@@ -240,12 +242,18 @@ if __name__ == "__main__":
     else:
         records = Records()
         records.read_records(sys.argv[1])
-        records.display_records()
+        records_output = records.display_records()
+        print('\n'.join(records_output))
+        records.save_to_file("reports.txt", records_output)
         
         if(len(sys.argv) > 2):
-             records.read_books(sys.argv[2])
-             records.display_books()
+            records.read_books(sys.argv[2])
+            books_output = records.display_books()
+            print('\n'.join(books_output))
+            records.save_to_file("reports.txt", records_output, books_output)
         
         if(len(sys.argv) > 3):
-             records.read_members(sys.argv[3])
-             records.display_members()
+            records.read_members(sys.argv[3])
+            members_output = records.display_members()
+            print('\n'.join(members_output))
+            records.save_to_file("reports.txt", records_output, books_output, members_output)
