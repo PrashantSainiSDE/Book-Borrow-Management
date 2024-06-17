@@ -1,5 +1,9 @@
 import sys
 import datetime
+import os
+
+class InvalidFileFormatError(Exception):
+    pass
 
 class Book:
     def __init__(self, book_id, name, book_type, num_copies, max_days, late_charge):
@@ -12,6 +16,8 @@ class Book:
         self.borrowed_days = {}
 
     def add_borrowed_days(self, member_id, days):
+        if not days.isdigit() and days != 'R':
+            raise InvalidFileFormatError(f"Invalid days value: {days}")
         self.borrowed_days[member_id] = days
     
     def num_borrowing_members(self):
@@ -34,6 +40,8 @@ class Member:
         self.borrowed_books = {}
 
     def add_borrowed_book(self, book_id, days):
+        if not days.isdigit() and days != 'R':
+            raise InvalidFileFormatError(f"Invalid days value: {days}")
         self.borrowed_books[book_id] = days
         
     def num_textbooks(self, books):
@@ -67,15 +75,23 @@ class Records:
 
     def read_records(self, record_file_name):
         try:
+            if os.stat(record_file_name).st_size == 0:
+                raise InvalidFileFormatError("Record file is empty.")
+
             with open(record_file_name, 'r') as file:
                 for line in file:
                     parts = line.strip().split(', ')
                     book_id = parts[0]
+                    if not book_id.startswith('B') or not book_id[1:].isdigit():
+                        raise InvalidFileFormatError(f"Invalid book ID: {book_id}")
+                    
                     if book_id not in self.books:
                         self.books[book_id] = Book(book_id, "", "", 0, 0, 0.0)
 
                     for part in parts[1:]:
                         member_id, days = part.split(': ')
+                        if not member_id.startswith('M') or not member_id[1:].isdigit():
+                            raise InvalidFileFormatError(f"Invalid member ID: {member_id}")
                         if member_id not in self.members:
                             self.members[member_id] = Member(member_id, "", "", "", "")
                         
@@ -84,23 +100,32 @@ class Records:
         except FileNotFoundError:
             print(f"Error: The file {record_file_name} does not exist.")
             sys.exit(1)
+        except InvalidFileFormatError as e:
+            print(f"Error: {e}")
+            sys.exit(1)
 
     def read_books(self, book_file_name):
         try:
+            if os.stat(book_file_name).st_size == 0:
+                raise InvalidFileFormatError("Book file is empty.")
+                
             with open(book_file_name, 'r') as file:
                 for line in file:
                     parts = line.strip().split(', ')
                     book_id, name, book_type, num_copies, max_days, late_charge = parts
+                    
+                    if not book_id.startswith('B') or not book_id[1:].isdigit():
+                        raise InvalidFileFormatError(f"Invalid book ID: {book_id}")
+                    
                     num_copies = int(num_copies)
                     max_days = int(max_days)
                     late_charge = float(late_charge)
 
                     if book_type == 'T' and max_days != 14:
-                        print(f"Error: Textbook {book_id} must have a max borrowing days of 14.")
-                        return False
+                        raise InvalidFileFormatError(f"Textbook {book_id} must have a max borrowing days of 14.")
+
                     if book_type == 'F' and max_days <= 14:
-                        print(f"Error: Fiction book {book_id} must have a max borrowing days greater than 14.")
-                        return False
+                        raise InvalidFileFormatError(f"Fiction book {book_id} must have a max borrowing days greater than 14.")
 
                     self.books[book_id].name = name
                     self.books[book_id].book_type = book_type
@@ -111,14 +136,22 @@ class Records:
         except FileNotFoundError:
             print(f"Error: The file {book_file_name} does not exist.")
             sys.exit(1)
+        except InvalidFileFormatError as e:
+            print(f"Error: {e}")
+            sys.exit(1)
 
     def read_members(self, member_file_name):
         try:
+            if os.stat(member_file_name).st_size == 0:
+                raise InvalidFileFormatError("Member file is empty.")
+        
             with open(member_file_name, 'r') as file:
                 for line in file:
                     parts = line.strip().split(', ')
                     if(len(parts) == 5):
                         member_id, first_name, last_name, dob, member_type = parts
+                        if not member_id.startswith('M') or not member_id[1:].isdigit():
+                            raise InvalidFileFormatError(f"Invalid member ID: {member_id}")
                    
                         self.members[member_id].first_name = first_name
                         self.members[member_id].last_name = last_name
@@ -127,6 +160,9 @@ class Records:
 
         except FileNotFoundError:
             print(f"Error: The file {member_file_name} does not exist.")
+        except InvalidFileFormatError as e:
+            print(f"Error: {e}")
+            sys.exit(1)
 
     def display_records(self):
         output = []
@@ -138,7 +174,6 @@ class Records:
         output.append("-" * 64)
 
         for member_id in self.members.keys():
-            
             line = f"| {member_id:<10}" + ''.join([f"{'--' if self.books[book_id].borrowed_days.get(member_id, 'xx') == 'R' else self.books[book_id].borrowed_days.get(member_id, 'xx'):>10}" for book_id in books_ids]) + " |"
             output.append(line)
         output.append("-" * 64)
@@ -226,7 +261,7 @@ class Records:
         output.append("-" * 101)
 
         output.append("MEMBER SUMMARY")
-        output.append(f"The most active member is: {most_active_member.first_name} {most_active_member.last_name} with {most_books_borrowed} books borrowed/reserved.")
+        output.append(f"The most active member is {most_active_member.first_name} {most_active_member.last_name} with {most_books_borrowed} books borrowed/reserved.")
         output.append(f"The member with the least average number of borrowing days is {least_avg_days_member.first_name} {least_avg_days_member.last_name} with {least_avg_days:.2f} days.")
 
         return output
@@ -237,23 +272,34 @@ class Records:
                 file.write('\n'.join(out) + '\n')
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        print("[Usage:] python my_record.py <record_file> [<book_file>] [<member_file>]")
-    else:
+    if len(sys.argv) == 2:
         records = Records()
         records.read_records(sys.argv[1])
         records_output = records.display_records()
         print('\n'.join(records_output))
         records.save_to_file("reports.txt", records_output)
-        
-        if(len(sys.argv) > 2):
+    
+    elif len(sys.argv) == 3:
+            records = Records()
+            records.read_records(sys.argv[1])
             records.read_books(sys.argv[2])
+            records_output = records.display_records()
             books_output = records.display_books()
+            print('\n'.join(records_output))
             print('\n'.join(books_output))
             records.save_to_file("reports.txt", records_output, books_output)
-        
-        if(len(sys.argv) > 3):
+    
+    elif len(sys.argv) == 4:
+            records = Records()
+            records.read_records(sys.argv[1])
+            records.read_books(sys.argv[2])
             records.read_members(sys.argv[3])
+            records_output = records.display_records()
+            books_output = records.display_books()
             members_output = records.display_members()
+            print('\n'.join(records_output))
+            print('\n'.join(books_output))
             print('\n'.join(members_output))
             records.save_to_file("reports.txt", records_output, books_output, members_output)
+    else:
+        print("[Usage:] python my_record.py <record_file> [<book_file>] [<member_file>]")

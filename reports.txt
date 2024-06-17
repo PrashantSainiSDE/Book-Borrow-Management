@@ -37,5 +37,5 @@ MEMBER INFORMATION
 | M06             Chris      Hemsworth    Standard     08-Nov-1983         3!          1       3.25 |
 -----------------------------------------------------------------------------------------------------
 MEMBER SUMMARY
-The most active member is: Emma Stone with 4 books borrowed/reserved.
+The most active member is Emma Stone with 4 books borrowed/reserved.
 The member with the least average number of borrowing days is Chris Hemsworth with 3.25 days.
