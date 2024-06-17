@@ -1,4 +1,57 @@
-Report generated on: 17/06/2024 16:51:56
+Report generated on: 17/06/2024 17:09:57
+RECORDS
+----------------------------------------------------------------
+| Member IDs       B01       B03       B04       B06       B07 |
+----------------------------------------------------------------
+| M01                7         2        xx        --        xx |
+| M03               --        xx         6        xx         6 |
+| M06                2        xx         2         8         1 |
+| M02               xx         8         1        xx         3 |
+| M05               xx        --        10         5        12 |
+----------------------------------------------------------------
+RECORDS SUMMARY
+There are 5 members and 5 books.
+The average number of borrow days is 5.21 (days).
+
+TEXTBOOK INFORMATION
+------------------------------------------------------------------------------------------------------------
+| Book IDs   Name            Type            Ncopy      Maxday     Lcharge    Nborrow    Nreserve   Range  |
+------------------------------------------------------------------------------------------------------------
+| B07        Maths           Textbook           10         14        1.2            4           0    1-12  |
+| B04        Programming     Textbook           10         14        1.2            4           0    1-10  |
+| B01        Python          Textbook            5         14        1.2            2           1    2-7   |
+------------------------------------------------------------------------------------------------------------
+TEXTBOOK SUMMARY
+The most popular textbook is Maths.
+The textbook Maths has the longest borrow days (12 days).
+
+FICTION INFORMATION
+------------------------------------------------------------------------------------------------------------
+| Book IDs   Name            Type            Ncopy      Maxday     Lcharge    Nborrow    Nreserve   Range  |
+------------------------------------------------------------------------------------------------------------
+| B06        Dune            Fiction             7         15        1.8            2           1    5-8   |
+| B03        Hamlet          Fiction             8         20        1.5            2           1    2-8   |
+------------------------------------------------------------------------------------------------------------
+FICTION SUMMARY
+The most popular fiction book is Dune.
+The fiction book Dune has the longest borrow days (8 days).
+
+Report generated on: 17/06/2024 17:10:11
+RECORDS
+----------------------------------------------------------------
+| Member IDs       B01       B03       B04       B06       B07 |
+----------------------------------------------------------------
+| M01                7         2        xx        --        xx |
+| M03               --        xx         6        xx         6 |
+| M06                2        xx         2         8         1 |
+| M02               xx         8         1        xx         3 |
+| M05               xx        --        10         5        12 |
+----------------------------------------------------------------
+RECORDS SUMMARY
+There are 5 members and 5 books.
+The average number of borrow days is 5.21 (days).
+
+Report generated on: 17/06/2024 17:10:17
 RECORDS
 ----------------------------------------------------------------
 | Member IDs       B01       B03       B04       B06       B07 |
@@ -58,57 +111,4 @@ PREMIUM MEMBERs INFORMATION
 PREMIUM MEMBERS SUMMARY
 The most active premium member is Leonardo DiCaprio with 3 books borrowed/reserved.
 The premium member with the least average number of borrowing days is Natalie Portman with 4.00 days.
-
-Report generated on: 17/06/2024 16:52:05
-RECORDS
-----------------------------------------------------------------
-| Member IDs       B01       B03       B04       B06       B07 |
-----------------------------------------------------------------
-| M01                7         2        xx        --        xx |
-| M03               --        xx         6        xx         6 |
-| M06                2        xx         2         8         1 |
-| M02               xx         8         1        xx         3 |
-| M05               xx        --        10         5        12 |
-----------------------------------------------------------------
-RECORDS SUMMARY
-There are 5 members and 5 books.
-The average number of borrow days is 5.21 (days).
-
-TEXTBOOK INFORMATION
-------------------------------------------------------------------------------------------------------------
-| Book IDs   Name            Type            Ncopy      Maxday     Lcharge    Nborrow    Nreserve   Range  |
-------------------------------------------------------------------------------------------------------------
-| B07        Maths           Textbook           10         14        1.2            4           0    1-12  |
-| B04        Programming     Textbook           10         14        1.2            4           0    1-10  |
-| B01        Python          Textbook            5         14        1.2            2           1    2-7   |
-------------------------------------------------------------------------------------------------------------
-TEXTBOOK SUMMARY
-The most popular textbook is Maths.
-The textbook Maths has the longest borrow days (12 days).
-
-FICTION INFORMATION
-------------------------------------------------------------------------------------------------------------
-| Book IDs   Name            Type            Ncopy      Maxday     Lcharge    Nborrow    Nreserve   Range  |
-------------------------------------------------------------------------------------------------------------
-| B06        Dune            Fiction             7         15        1.8            2           1    5-8   |
-| B03        Hamlet          Fiction             8         20        1.5            2           1    2-8   |
-------------------------------------------------------------------------------------------------------------
-FICTION SUMMARY
-The most popular fiction book is Dune.
-The fiction book Dune has the longest borrow days (8 days).
-
-Report generated on: 17/06/2024 16:52:25
-RECORDS
-----------------------------------------------------------------
-| Member IDs       B01       B03       B04       B06       B07 |
-----------------------------------------------------------------
-| M01                7         2        xx        --        xx |
-| M03               --        xx         6        xx         6 |
-| M06                2        xx         2         8         1 |
-| M02               xx         8         1        xx         3 |
-| M05               xx        --        10         5        12 |
-----------------------------------------------------------------
-RECORDS SUMMARY
-There are 5 members and 5 books.
-The average number of borrow days is 5.21 (days).
 

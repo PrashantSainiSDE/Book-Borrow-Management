@@ -2,9 +2,11 @@ import sys
 import datetime
 import os
 
+# Custom exception for invalid file format errors
 class InvalidFileFormatError(Exception):
     pass
 
+# Book class to manage book details and operations
 class Book:
     def __init__(self, book_id, name, book_type, num_copies, max_days, late_charge):
         self.book_id = book_id
@@ -15,21 +17,26 @@ class Book:
         self.late_charge = late_charge
         self.borrowed_days = {}
 
+    # Add borrowed days for a member
     def add_borrowed_days(self, member_id, days):
         if not days.isdigit() and days != 'R':
             raise InvalidFileFormatError(f"Invalid days value: {days}")
         self.borrowed_days[member_id] = days
     
+    # Get number of borrowing members
     def num_borrowing_members(self):
         return sum(1 for days in self.borrowed_days.values() if days.isdigit())
 
+    # Get number of reserving members
     def num_reserving_members(self):
         return sum(1 for days in self.borrowed_days.values() if days == 'R')
 
+    # Get range of borrowing days minimum and maximum
     def range_of_borrowing_days(self):
         days = [int(d) for d in self.borrowed_days.values() if d.isdigit()]
         return (min(days), max(days)) if days else (0, 0)
 
+# Member class to manage member details and operations
 class Member:
     def __init__(self, member_id, first_name, last_name, dob, member_type):
         self.member_id = member_id
@@ -39,21 +46,26 @@ class Member:
         self.member_type = member_type
         self.borrowed_books = {}
 
+    # Add borrowed book for a member
     def add_borrowed_book(self, book_id, days):
         if not days.isdigit() and days != 'R':
             raise InvalidFileFormatError(f"Invalid days value: {days}")
         self.borrowed_books[book_id] = days
-        
+
+    # Get number of textbooks borrowed   
     def num_textbooks(self, books):
         return sum(1 for book_id in self.borrowed_books.keys() if books[book_id].book_type == 'T')
 
+    # Get number of fictions borrowed
     def num_fictions(self, books):
         return sum(1 for book_id in self.borrowed_books.keys() if books[book_id].book_type == 'F')
 
+    # Calculate average borrow days
     def average_borrow_days(self):
         days = [int(d) for d in self.borrowed_books.values() if d.isdigit()]
         return sum(days) / len(days)
 
+    # Calculate total fees for a member if it is above free criteria
     def calculate_fees(self, books):
         total_fee = 0.0
         for book_id, days in self.borrowed_books.items():
@@ -64,12 +76,14 @@ class Member:
                     total_fee += (days - book.max_days) * book.late_charge
         return total_fee
 
+    # Validate borrowing limits for a member
     def validate_borrowing_limits(self, num_textbooks, num_fictions):
         if self.member_type == "Standard":
             return num_textbooks <= 1 and num_fictions <= 2
         elif self.member_type == "Premium":
             return num_textbooks <= 2 and num_fictions <= 3
 
+    # Validate reserving limits for a member
     def validate_reserving_limits(self, books):
         num_textbooks = sum(1 for book_id, days in self.borrowed_books.items() if days == 'R' and books[book_id].book_type == 'T')
         num_fictions = sum(1 for book_id, days in self.borrowed_books.items() if days == 'R' and books[book_id].book_type == 'F')
@@ -77,12 +91,14 @@ class Member:
             return num_textbooks <= 1 and num_fictions <= 2
         elif self.member_type == "Premium":
             return num_textbooks <= 2 and num_fictions <= 3
-        
+
+# Records class to manage all records        
 class Records:
     def __init__(self):
         self.books = {}
         self.members = {}
 
+    # Read records from file
     def read_records(self, record_file_name):
         try:
             if os.stat(record_file_name).st_size == 0:
@@ -114,6 +130,7 @@ class Records:
             print(f"Error: {e}")
             sys.exit(1)
 
+    # Read books from file
     def read_books(self, book_file_name):
         try:
             if os.stat(book_file_name).st_size == 0:
@@ -150,6 +167,7 @@ class Records:
             print(f"Error: {e}")
             sys.exit(1)
 
+    # Read members from file
     def read_members(self, member_file_name):
         try:
             if os.stat(member_file_name).st_size == 0:
@@ -174,7 +192,8 @@ class Records:
             print(f"Error: {e}")
             sys.exit(1)
 
-    def display_records(self):
+    # Display records
+    def show_records(self):
         output = []
         output.append("RECORDS")
         output.append("-" * 64)
@@ -207,7 +226,8 @@ class Records:
 
         return output
 
-    def display_books(self):
+    # Display books
+    def show_books(self):
         textbooks_output = []
         fictions_output = []
         
@@ -255,7 +275,8 @@ class Records:
         
         return textbooks_output + fictions_output
 
-    def display_members(self):
+    # Display members
+    def show_members(self):
         standard_members_output = []
         premium_members_output = []
 
@@ -335,8 +356,31 @@ class Records:
 
         return standard_members_output + premium_members_output
   
+    # Print all the items and save to a file
+    def display_output(self,arg_len):
+        if(arg_len == 2):
+            records_output = records.show_records()
+            print('\n'.join(records_output))
+            records.save_to_file("reports.txt", records_output)
+        if(arg_len == 3):
+            records_output = records.show_records()
+            books_output = records.show_books()
+            print('\n'.join(records_output))
+            print('\n'.join(books_output))
+            records.save_to_file("reports.txt", records_output, books_output)
+        if(arg_len == 4):
+            records_output = records.show_records()
+            books_output = records.show_books()
+            members_output = records.show_members()
+            print('\n'.join(records_output))
+            print('\n'.join(books_output))
+            print('\n'.join(members_output))
+            records.save_to_file("reports.txt", records_output, books_output, members_output)
+
+    # Save outputs in a file (append mode)
     def save_to_file(self, filename, *output):
-        timestamp = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        # Get current time
+        timestamp = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S") 
         with open(filename, 'a') as file:
              file.write(f"Report generated on: {timestamp}\n")
              for out in output:
@@ -344,34 +388,23 @@ class Records:
              file.write('\n')
 
 if __name__ == "__main__":
+    # Check for command line arguments and run based on arguments
     if len(sys.argv) == 2:
         records = Records()
         records.read_records(sys.argv[1])
-        records_output = records.display_records()
-        print('\n'.join(records_output))
-        records.save_to_file("reports.txt", records_output)
+        records.display_output(2)
     
     elif len(sys.argv) == 3:
-            records = Records()
-            records.read_records(sys.argv[1])
-            records.read_books(sys.argv[2])
-            records_output = records.display_records()
-            books_output = records.display_books()
-            print('\n'.join(records_output))
-            print('\n'.join(books_output))
-            records.save_to_file("reports.txt", records_output, books_output)
+        records = Records()
+        records.read_records(sys.argv[1])
+        records.read_books(sys.argv[2])
+        records.display_output(3)  
     
     elif len(sys.argv) == 4:
-            records = Records()
-            records.read_records(sys.argv[1])
-            records.read_books(sys.argv[2])
-            records.read_members(sys.argv[3])
-            records_output = records.display_records()
-            books_output = records.display_books()
-            members_output = records.display_members()
-            print('\n'.join(records_output))
-            print('\n'.join(books_output))
-            print('\n'.join(members_output))
-            records.save_to_file("reports.txt", records_output, books_output, members_output)
+        records = Records()
+        records.read_records(sys.argv[1])
+        records.read_books(sys.argv[2])
+        records.read_members(sys.argv[3])
+        records.display_output(4)  
     else:
         print("[Usage:] python my_record.py <record_file> [<book_file>] [<member_file>]")
