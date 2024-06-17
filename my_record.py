@@ -336,9 +336,12 @@ class Records:
         return standard_members_output + premium_members_output
   
     def save_to_file(self, filename, *output):
-        with open(filename, 'w') as file:
+        timestamp = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        with open(filename, 'a') as file:
+             file.write(f"Report generated on: {timestamp}\n")
              for out in output:
                 file.write('\n'.join(out) + '\n')
+             file.write('\n')
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
