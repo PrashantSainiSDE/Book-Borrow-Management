@@ -12,19 +12,28 @@ RECORDS SUMMARY
 There are 5 members and 5 books.
 The average number of borrow days is 5.21 (days).
 
-BOOK INFORMATION
+TEXTBOOK INFORMATION
 ------------------------------------------------------------------------------------------------------------
 | Book IDs   Name            Type            Ncopy      Maxday     Lcharge    Nborrow    Nreserve   Range  |
 ------------------------------------------------------------------------------------------------------------
-| B01        Python          Textbook            5         14        1.2            2           1    2-7   |
-| B03        Hamlet          Fiction             8         20        1.5            2           1    2-8   |
-| B04        Programming     Textbook           10         14        1.2            4           0    1-10  |
-| B06        Dune            Fiction             7         15        1.8            2           1    5-8   |
 | B07        Maths           Textbook           10         14        1.2            4           0    1-12  |
+| B04        Programming     Textbook           10         14        1.2            4           0    1-10  |
+| B01        Python          Textbook            5         14        1.2            2           1    2-7   |
 ------------------------------------------------------------------------------------------------------------
-BOOK SUMMARY
-The most popular book is Programming.
-The book Maths has the longest borrow days (12 days).
+TEXTBOOK SUMMARY
+The most popular textbook is Maths.
+The textbook Maths has the longest borrow days (12 days).
+
+FICTION INFORMATION
+------------------------------------------------------------------------------------------------------------
+| Book IDs   Name            Type            Ncopy      Maxday     Lcharge    Nborrow    Nreserve   Range  |
+------------------------------------------------------------------------------------------------------------
+| B06        Dune            Fiction             7         15        1.8            2           1    5-8   |
+| B03        Hamlet          Fiction             8         20        1.5            2           1    2-8   |
+------------------------------------------------------------------------------------------------------------
+FICTION SUMMARY
+The most popular fiction book is Dune.
+The fiction book Dune has the longest borrow days (8 days).
 
 MEMBER INFORMATION
 ----------------------------------------------------------------------------------------------------------------

@@ -208,32 +208,52 @@ class Records:
         return output
 
     def display_books(self):
-        output = []
-        output.append("\nBOOK INFORMATION")
-        output.append("-" * 108)
-        output.append(f"| {'Book IDs':<10} {'Name':<15} {'Type':<15} {'Ncopy':<10} {'Maxday':<10} {'Lcharge':<10} {'Nborrow':<10} {'Nreserve':<10} {'Range':<6} |")
-        output.append("-" * 108)
-
-        for book in self.books.values():
-            book_type = "Textbook" if book.book_type == 'T' else "Fiction"
-            nborrow = book.num_borrowing_members()
-            nreserve = book.num_reserving_members()
-            min_days, max_days = book.range_of_borrowing_days()
-
-            output.append(f"| {book.book_id:<10} {book.name:<15} {book_type:<10} {book.num_copies:>10} {book.max_days:>10} {book.late_charge:>10.1f} {nborrow:>12} {nreserve:>11} {min_days:>4}-{max_days:<3} |")
-
-        output.append("-" * 108)
-
-        output.append("BOOK SUMMARY")
-        most_popular_books = sorted(self.books.values(), key=lambda b: b.num_borrowing_members() + b.num_reserving_members(), reverse=True)
-        most_popular_book = most_popular_books[0]
-        output.append(f"The most popular book is {most_popular_book.name}.")
-
-        longest_borrowed_books = sorted(self.books.values(), key=lambda b: b.range_of_borrowing_days()[1], reverse=True)
-        longest_borrowed_book = longest_borrowed_books[0]
-        output.append(f"The book {longest_borrowed_book.name} has the longest borrow days ({longest_borrowed_book.range_of_borrowing_days()[1]} days).")
+        textbooks_output = []
+        fictions_output = []
         
-        return output
+        textbooks_output.append("\nTEXTBOOK INFORMATION")
+        textbooks_output.append("-" * 108)
+        textbooks_output.append(f"| {'Book IDs':<10} {'Name':<15} {'Type':<15} {'Ncopy':<10} {'Maxday':<10} {'Lcharge':<10} {'Nborrow':<10} {'Nreserve':<10} {'Range':<6} |")
+        textbooks_output.append("-" * 108)
+
+        fictions_output.append("\nFICTION INFORMATION")
+        fictions_output.append("-" * 108)
+        fictions_output.append(f"| {'Book IDs':<10} {'Name':<15} {'Type':<15} {'Ncopy':<10} {'Maxday':<10} {'Lcharge':<10} {'Nborrow':<10} {'Nreserve':<10} {'Range':<6} |")
+        fictions_output.append("-" * 108)
+
+        textbooks = sorted([book for book in self.books.values() if book.book_type == 'T'], key=lambda x: x.name)
+        fictions = sorted([book for book in self.books.values() if book.book_type == 'F'], key=lambda x: x.name)
+
+        for book in textbooks:
+            min_days, max_days = book.range_of_borrowing_days()
+            textbooks_output.append(f"| {book.book_id:<10} {book.name:<15} {'Textbook':<10} {book.num_copies:>10} {book.max_days:>10} {book.late_charge:>10.1f} {book.num_borrowing_members():>12} {book.num_reserving_members():>11} {min_days:>4}-{max_days:<3} |")
+
+        for book in fictions:
+            min_days, max_days = book.range_of_borrowing_days()
+            fictions_output.append(f"| {book.book_id:<10} {book.name:<15} {'Fiction':<10} {book.num_copies:>10} {book.max_days:>10} {book.late_charge:>10.1f} {book.num_borrowing_members():>12} {book.num_reserving_members():>11} {min_days:>4}-{max_days:<3} |")
+
+        textbooks_output.append("-" * 108)
+        fictions_output.append("-" * 108)
+
+        textbooks_output.append("TEXTBOOK SUMMARY")
+        most_popular_textbooks = sorted(textbooks, key=lambda b: b.num_borrowing_members() + b.num_reserving_members(), reverse=True)
+        most_popular_textbook = most_popular_textbooks[0]
+        textbooks_output.append(f"The most popular textbook is {most_popular_textbook.name}.")
+        
+        fictions_output.append("FICTION SUMMARY")
+        most_popular_fictionbooks = sorted(fictions, key=lambda b: b.num_borrowing_members() + b.num_reserving_members(), reverse=True)
+        most_popular_fictionbook = most_popular_fictionbooks[0]
+        fictions_output.append(f"The most popular fiction book is {most_popular_fictionbook.name}.")
+
+        longest_borrowed_textbooks = sorted(textbooks, key=lambda b: b.range_of_borrowing_days()[1], reverse=True)
+        longest_borrowed_textbook = longest_borrowed_textbooks[0]
+        textbooks_output.append(f"The textbook {longest_borrowed_textbook.name} has the longest borrow days ({longest_borrowed_textbook.range_of_borrowing_days()[1]} days).")
+
+        longest_borrowed_fictionbooks = sorted(fictions, key=lambda b: b.range_of_borrowing_days()[1], reverse=True)
+        longest_borrowed_fictionbook = longest_borrowed_fictionbooks[0]
+        fictions_output.append(f"The fiction book {longest_borrowed_fictionbook.name} has the longest borrow days ({longest_borrowed_fictionbook.range_of_borrowing_days()[1]} days).")
+        
+        return textbooks_output + fictions_output
 
     def display_members(self):
         output = []
