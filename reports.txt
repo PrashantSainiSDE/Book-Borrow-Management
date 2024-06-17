@@ -27,15 +27,15 @@ The most popular book is Programming.
 The book Maths has the longest borrow days (12 days).
 
 MEMBER INFORMATION
------------------------------------------------------------------------------------------------------
-| Member IDs      FName      LName            Type             DOB  Ntextbook   Nfiction    Average |
------------------------------------------------------------------------------------------------------
-| M01             Tom        Hanks        Standard     07-Sep-1956          1          2       4.50 |
-| M02             Natalie    Portman       Premium     06-Sep-1981          2          1       4.00 |
-| M03             Leonardo   DiCaprio      Premium     11-Nov-1974         3!          0       6.00 |
-| M05             Emma       Stone        Standard     11-Jun-1988         2!          2       9.00 |
-| M06             Chris      Hemsworth    Standard     08-Nov-1983         3!          1       3.25 |
------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+| Member IDs      FName      LName            Type             DOB  Ntextbook   Nfiction    Average        Fee |
+----------------------------------------------------------------------------------------------------------------
+| M01             Tom        Hanks        Standard     07-Sep-1956          1          2       4.50       0.00 |
+| M02             Natalie    Portman       Premium     06-Sep-1981          2          1       4.00       0.00 |
+| M03             Leonardo   DiCaprio      Premium     11-Nov-1974         3!          0       6.00       0.00 |
+| M05             Emma       Stone        Standard     11-Jun-1988         2!          2       9.00       0.00 |
+| M06             Chris      Hemsworth    Standard     08-Nov-1983         3!          1       3.25       0.00 |
+----------------------------------------------------------------------------------------------------------------
 MEMBER SUMMARY
 The most active member is Emma Stone with 4 books borrowed/reserved.
 The member with the least average number of borrowing days is Chris Hemsworth with 3.25 days.

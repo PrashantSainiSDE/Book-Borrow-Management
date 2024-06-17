@@ -54,6 +54,16 @@ class Member:
         days = [int(d) for d in self.borrowed_books.values() if d.isdigit()]
         return sum(days) / len(days)
 
+    def calculate_fees(self, books):
+        total_fee = 0.0
+        for book_id, days in self.borrowed_books.items():
+            if days.isdigit():
+                days = int(days)
+                book = books[book_id]
+                if days > book.max_days:
+                    total_fee += (days - book.max_days) * book.late_charge
+        return total_fee
+
     def validate_borrowing_limits(self, num_textbooks, num_fictions):
         if self.member_type == "Standard":
             return num_textbooks <= 1 and num_fictions <= 2
@@ -228,9 +238,9 @@ class Records:
     def display_members(self):
         output = []
         output.append("\nMEMBER INFORMATION")
-        output.append("-" * 101)
-        output.append(f"| {'Member IDs':<15} {'FName':<10} {'LName':<5} {'Type':>15} {'DOB':>15} {'Ntextbook':>10} {'Nfiction':>10} {'Average':>10} |")
-        output.append("-" * 101)
+        output.append("-" * 112)
+        output.append(f"| {'Member IDs':<15} {'FName':<10} {'LName':<5} {'Type':>15} {'DOB':>15} {'Ntextbook':>10} {'Nfiction':>10} {'Average':>10} {'Fee':>10} |")
+        output.append("-" * 112)
 
         most_active_member = None
         most_books_borrowed = 0
@@ -244,10 +254,11 @@ class Records:
             avg_days = self.members[member].average_borrow_days()
             ntextbooks_str = f"{ntextbooks}!" if not self.members[member].validate_borrowing_limits(ntextbooks, nfictions) else str(ntextbooks)
             nfictions_str = f"{nfictions}!" if not self.members[member].validate_reserving_limits(self.books) else str(nfictions)
+            fee = self.members[member].calculate_fees(self.books)
             
             dob = datetime.datetime.strptime(self.members[member].dob, "%m/%d/%Y").strftime("%d-%b-%Y")
 
-            output.append(f"| {self.members[member].member_id:<15} {self.members[member].first_name:<10} {self.members[member].last_name:<10} {self.members[member].member_type:>10} {dob:>15} {ntextbooks_str:>10} {nfictions_str:>10} {avg_days:>10.2f} |")
+            output.append(f"| {self.members[member].member_id:<15} {self.members[member].first_name:<10} {self.members[member].last_name:<10} {self.members[member].member_type:>10} {dob:>15} {ntextbooks_str:>10} {nfictions_str:>10} {avg_days:>10.2f} {fee:>10.2f} |")
 
             total_borrowed = ntextbooks + nfictions
             if total_borrowed > most_books_borrowed:
@@ -258,7 +269,7 @@ class Records:
                 least_avg_days = avg_days
                 least_avg_days_member = self.members[member]
 
-        output.append("-" * 101)
+        output.append("-" * 112)
 
         output.append("MEMBER SUMMARY")
         output.append(f"The most active member is {most_active_member.first_name} {most_active_member.last_name} with {most_books_borrowed} books borrowed/reserved.")
